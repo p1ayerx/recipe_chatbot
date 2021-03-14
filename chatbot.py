@@ -3,12 +3,20 @@ import recipe_parser
 import validators
 import requests
 from bs4 import BeautifulSoup
+import re
+from text_to_num import alpha2digit
 
 while True:
     user = input("User: ")
 
     tokens = nltk.word_tokenize(user)
     validate = validators.url(user)
+
+    finish_words = ["done", "finish"]
+    s = set(tokens)
+    if [x for x in finish_words if x in s]:
+        print("Bye!")
+        break
 
     headers = {
         'Access-Control-Allow-Origin': '*',
@@ -33,29 +41,74 @@ while True:
         print("Bot: Recipe is "+title)
         recipe_content = True
 
-        while recipe_content:
-            print("Bot: What do you want to know the ingredients or tools or methods or instructions of the recipe?")
+        ingredient_words = ["ingredients","ingredient"]
+        tool_words = ["tool","tools"]
+        method_words = ["method","methods"]
+        instruction_words = ["instructions","instruction"]
+        finish_words = ["done","finish"]
+        back_step_words = ["previous","back"]
+        next_words = ["next"]
+        step_counter = 1
 
+        print("Bot: What do you want to know the ingredients or tools or methods or instructions of the recipe?")
+
+        while recipe_content:
             user = input("User: ")
 
             tokens = nltk.word_tokenize(user)
-            if "ingredients" in tokens:
+            s = set(tokens)
+            if [x for x in ingredient_words if x in s]:
                 print("Ingredients:")
                 for k in ingredients_dict.keys():
                     print("\t" + k + ": " + ingredients_dict[k])
-            elif "tools" in tokens:
+            elif [x for x in tool_words if x in s]:
                 print("Tools:")
                 for t in tools_list:
                     print("\t" + t)
-            elif "methods" in tokens:
+            elif [x for x in method_words if x in s]:
                 for m in methods_list:
                     print("\t" + m)
-            elif "instructions" in tokens:
-                for i, instruction in enumerate(instructions_lst):
-                    print("\tStep " + str(i + 1) + ": " + instruction)
-            print("Bot: Do you want to know more about the recipe?")
-            user = input("User: ")
-            tokens = nltk.word_tokenize(user)
-            if "no" in tokens:
-                recipe_content = False
-                print("OK! Try a new recipe.")
+            elif [x for x in instruction_words if x in s] or [x for x in back_step_words if x in s] or [x for x in next_words if x in s] or "step" in tokens:
+                user = alpha2digit(user, "en")
+                if "first" in tokens:
+                    step_counter = 1
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
+                elif "second" in tokens:
+                    if len(instructions_lst) < 2:
+                        print("Bot: Step is out of bounds.")
+                        continue
+                    step_counter = 2
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
+                elif "third" in tokens:
+                    if len(instructions_lst) < 3:
+                        print("Bot: Step is out of bounds.")
+                        continue
+                    step_counter = 3
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
+                elif re.search("\d+",user):
+                    if len(instructions_lst) >= int(re.search("\d+",user)[0]) > 0:
+                        step_counter = int(re.search("\d+",user)[0])
+                        print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
+                    else:
+                        print("Bot: Step is out of bounds.")
+                elif "next" in tokens:
+                    step_counter += 1
+                    if step_counter > len(instructions_lst):
+                        print("Bot: There are no more steps. There are only "+str(len(instructions_lst))+" steps.")
+                        step_counter -= 1
+                        continue
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter-1])
+                elif [x for x in back_step_words if x in s]:
+                    if step_counter == 1:
+                        print("Bot: There are no steps before this.")
+                        continue
+                    step_counter = step_counter - 1
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
+                else:
+                    print("Bot: Step " + str(step_counter) + ": " + instructions_lst[step_counter-1])
+
+            elif [x for x in finish_words if x in s]:
+                print("Bot: OK! Next recipe URL.")
+                break
+
+            print("Bot: What can I do for you?")
