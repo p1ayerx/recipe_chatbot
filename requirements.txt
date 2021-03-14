@@ -143,6 +143,7 @@ stemming==1.0.1
 tangled-up-in-unicode==0.0.6
 terminado==0.8.3
 testpath==0.4.4
+text2num==2.2.1
 textblob==0.15.3
 thinc==7.3.1
 tld==0.12.5
