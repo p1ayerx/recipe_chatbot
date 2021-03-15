@@ -15,7 +15,6 @@ import copy
 import logging
 
 logging.getLogger("quantulum3").setLevel(logging.CRITICAL)
-logging.getLogger("nltk").setLevel(logging.CRITICAL)
 
 nltk.download('punkt', quiet=True)
 nltk.download("wordnet", quiet=True)
