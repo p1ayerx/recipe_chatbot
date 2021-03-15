@@ -13,6 +13,7 @@ from nltk.tokenize import word_tokenize
 from PyDictionary import PyDictionary
 import copy
 import logging
+import random
 
 logging.getLogger("quantulum3").setLevel(logging.CRITICAL)
 
@@ -122,9 +123,40 @@ def strip_preps(np):
                 npStr += word.text + " "
     return npStr[:-1]
 
+def get_np(instruction):
+    pattern_single = [
+        {'TAG': 'VB', 'OP': '+'},
+        {'TAG': "IN", 'OP': '?'},
+        {'TAG': "DT", 'OP': '?'},
+        {'TAG': 'NN', 'OP': '*'},
+        {'TAG': 'NN', 'OP': '+'}
+    ]
+    pattern_plural = [
+        {'TAG': 'VB', 'OP': '+'},
+        {'TAG': "IN", 'OP': '?'},
+        {'TAG': "DT", 'OP': '?'},
+        {'TAG': 'NN', 'OP': '*'},
+        {'TAG': 'NNS', 'OP': '+'}
+    ]
+
+    patterns = [pattern_single, pattern_plural]
+    doc = nlp(instruction)
+    verb_phrases = set()
+
+    for pattern in patterns:
+        matcher = Matcher(nlp.vocab)
+        matcher.add("verb-phrases", None, pattern)
+        matches = matcher(doc)
+
+        [verb_phrases.add(doc[start:end].text.lower()) for _, start, end in matches]
+
+    vp_list = list(verb_phrases)
+    random.shuffle(vp_list)
+
+    return vp_list
+    
 #takes instructions, ingredients dictionary, and title. Returns list of possible tools
 def get_tools(lst, ingredients, title):
-    nlp = spacy.load('en_core_web_lg')
     ingr = set()
     noun_phrases = set()
     ingrsList = list(ingredients.keys())
@@ -191,7 +223,6 @@ def get_tools(lst, ingredients, title):
 
 #takes instructions, returns list of verbs
 def get_methods(steps):
-    nlp = spacy.load('en_core_web_lg')
     verbs = {}
     badWords = ["let", "serve", "bring", "place", "be", "make", "use", "read", "turn", "add", "remove", "move", "create", "begin", "allow", "continue"]
     pattern=[{'TAG': 'VB'}]
@@ -520,6 +551,7 @@ def asian_cuisine_swap(dic, instructions, make_asian):
 
         return dic,instructions
 
+nlp = spacy.load('en_core_web_lg')
+
 if __name__ == '__main__':
-    nlp = spacy.load('en_core_web_lg')
     read_in_url()

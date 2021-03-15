@@ -26,6 +26,8 @@ while True:
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
     }
 
+    googleURL = r"https://www.google.com/search?q=how+to"
+
     if "recipe" in tokens:
         print("Bot:  Sure. Please specify a URL.")
     elif validate == True:
@@ -48,6 +50,8 @@ while True:
         finish_words = ["done","finish","exit"]
         back_step_words = ["previous","back","last"]
         next_words = ["next", "yes"]
+        how_to_words = ["How", "how"]
+        bad_words = ["the", "a"]
         step_counter = 1
         last_was_step = False
 
@@ -71,6 +75,25 @@ while True:
                 print("Bot:  Here are the methods for \"{0}\":".format(title))
                 for m in methods_list:
                     print("\t" + m)
+            elif [x for x in how_to_words if x in s]:
+                noun_phrases_input = recipe_parser.get_np(user)
+                noun_phrases_step = recipe_parser.get_np(instructions_lst[step_counter - 1])
+
+                if noun_phrases_input:
+                    words = noun_phrases_input[0].split()
+                elif noun_phrases_step:
+                    print(noun_phrases_step)
+                    words = noun_phrases_step[0].split()
+                else:
+                    print("Sorry, I don't have answer for that.")
+                    continue
+
+                words = [x for x in words if x not in bad_words]
+                query = googleURL
+                for x in words: 
+                    query += "+" + x
+                print("No worries. I found a reference for you: " + query)
+
             elif [x for x in instruction_words if x in s] or [x for x in back_step_words if x in s] or [x for x in next_words if x in s]:
                 last_was_step = True
                 user = alpha2digit(user, "en")
