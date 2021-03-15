@@ -90,11 +90,12 @@ while True:
                     step_counter = 3
                     print("Bot:  Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
                 elif re.search("\d+",user):
-                    if len(instructions_lst) >= int(re.search("\d+",user)[0]) > 0:
-                        step_counter = int(re.search("\d+",user)[0])
+                    stepInt = int(re.search("\d+",user)[0])
+                    if len(instructions_lst) >= stepInt > 0:
+                        step_counter = stepInt
                         print("Bot:  Step " + str(step_counter) + ": " + instructions_lst[step_counter - 1])
                     else:
-                        print("Bot:  Step is out of bounds.")
+                        print("Bot:  There is no step {0}. There are only {1} steps.".format(stepInt, len(instructions_lst)))
                 elif [x for x in next_words if x in s]:
                     step_counter += 1
                     if step_counter > len(instructions_lst):
@@ -115,7 +116,7 @@ while True:
                     print("Bot:  Step " + str(step_counter) + ": " + instructions_lst[step_counter-1])
 
             elif [x for x in finish_words if x in s]:
-                print("Bot:  OK! Next recipe URL.")
+                print("Bot:  Okay! Please enter another recipe URL.")
                 break
 
             if last_was_step:
