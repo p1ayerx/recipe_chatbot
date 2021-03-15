@@ -12,10 +12,14 @@ from spacy.tokens import Span
 from nltk.tokenize import word_tokenize
 from PyDictionary import PyDictionary
 import copy
+import logging
 
-nltk.download('punkt')
-nltk.download("wordnet")
-nltk.download("brown")
+logging.getLogger("quantulum3").setLevel(logging.CRITICAL)
+logging.getLogger("nltk").setLevel(logging.CRITICAL)
+
+nltk.download('punkt', quiet=True)
+nltk.download("wordnet", quiet=True)
+nltk.download("brown", quiet=True)
 warnings.simplefilter('ignore')
 
 headers = {
