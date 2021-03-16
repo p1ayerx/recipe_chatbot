@@ -9,7 +9,7 @@ from text_to_num import alpha2digit
 print("Recipe Robot:  How I can help today?")
 
 while True:
-    user = input("User: ")
+    user = input("User:          ")
 
     tokens = nltk.word_tokenize(user)
     validate = validators.url(user)
@@ -58,25 +58,28 @@ while True:
         last_was_step = False
 
         while recipe_content:
-            user = input("User: ")
+            user = input("User:          ")
 
             tokens = nltk.word_tokenize(user)
             s = set(tokens)
             if [x for x in ingredient_words if x in s]:
                 last_was_step = False
-                print("Recipe Robot:  Here are the ingredients for \"{0}\":".format(title))
+                print("Recipe Robot:  Here are the ingredients for \"{0}\":\n".format(title))
                 for k in ingredients_dict.keys():
-                    print("\t" + k + ": " + ingredients_dict[k])
+                    print("\t- " + k + ": " + ingredients_dict[k])
+                print("")
             elif [x for x in tool_words if x in s]:
                 last_was_step = False
-                print("Recipe Robot:  Here are the tools for \"{0}\":".format(title))
+                print("Recipe Robot:  Here are the tools for \"{0}\":\n".format(title))
                 for t in tools_list:
-                    print("\t" + t)
+                    print("\t- " + t)
+                print("")
             elif [x for x in method_words if x in s]:
                 last_was_step = False
-                print("Recipe Robot:  Here are the methods for \"{0}\":".format(title))
+                print("Recipe Robot:  Here are the methods for \"{0}\":\n".format(title))
                 for m in methods_list:
-                    print("\t" + m)
+                    print("\t- " + m)
+                print("")
             elif [x for x in how_to_words if x in s]:
                 noun_phrases_input = recipe_parser.get_np(user)
                 noun_phrases_step = recipe_parser.get_np(instructions_lst[step_counter - 1])
