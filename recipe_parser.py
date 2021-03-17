@@ -154,7 +154,7 @@ def get_np(instruction):
     random.shuffle(vp_list)
 
     return vp_list
-    
+
 #takes instructions, ingredients dictionary, and title. Returns list of possible tools
 def get_tools(lst, ingredients, title):
     ingr = set()
@@ -206,8 +206,9 @@ def get_tools(lst, ingredients, title):
     np_temp = set(noun_phrases)
 
     for np in np_temp:
+        wordSplit = np.split(" ")
         word = np.split(" ")[-1]
-        meaningsDict = dictionary.meaning(word)
+        meaningsDict = dictionary.meaning(word, disable_errors=True)
         if meaningsDict:
             if 'Noun' in meaningsDict.keys():
                 meaningsNoun = meaningsDict['Noun']
