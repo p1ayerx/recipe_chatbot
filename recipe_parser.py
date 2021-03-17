@@ -150,6 +150,13 @@ def get_np(instruction):
 
         [verb_phrases.add(doc[start:end].text.lower()) for _, start, end in matches]
 
+    if not verb_phrases:
+        lastToken = doc[len(doc)-1:len(doc)]
+        if lastToken[0].text == "?":
+            lastToken = doc[len(doc)-2:len(doc)-1]
+        if lastToken[0].tag_ == "VB":
+            verb_phrases.add(lastToken[0].text)
+
     vp_list = list(verb_phrases)
     random.shuffle(vp_list)
 
