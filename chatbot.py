@@ -9,7 +9,7 @@ from text_to_num import alpha2digit
 exit_flow = False
 completely_done_flow = False
 
-print("Recipe Robot:  How I can help today?")
+print("Recipe Robot:  How can I help today?")
 
 while True:
     if completely_done_flow:
@@ -26,14 +26,14 @@ while True:
         exit_flow = True
         print("Recipe Robot:  Are you sure you want to exit?")
 
-    exit_finish_words = ["Y", "y"]
-    if exit_flow:
-        exit_flow = False
-        if [x for x in exit_finish_words if x in s]:
-            print("Recipe Robot:  Bye! Enjoy Your Food!")
-            break
-        else:
-            print("Recipe Robot:  Okay, I can continue to help")
+        exit_finish_words = ["Y", "y"]
+        if exit_flow:
+            exit_flow = False
+            if [x for x in exit_finish_words if x in s]:
+                print("Recipe Robot:  Bye! Enjoy Your Food!")
+                break
+            else:
+                print("Recipe Robot:  Okay, I can continue to help")
 
     headers = {
         'Access-Control-Allow-Origin': '*',
